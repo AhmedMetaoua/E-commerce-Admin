@@ -33,7 +33,7 @@ table.basic {
 }
 table.basic thead tr td,
 table.basic thead tr th {
-  @apply bg-gray-200 text-gray-600 uppercase text-sm px-4 py-2 border-b border-gray-200 ;
+  @apply bg-gray-200 text-gray-600 uppercase text-sm px-4 py-2 border-b border-gray-200 text-left;
 }
 table.basic tbody tr td {
   @apply border-t px-4 py-2 text-sm text-gray-800;

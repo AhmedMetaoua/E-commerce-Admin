@@ -9,6 +9,7 @@ export default function ProductForm({
   title: oldTitle,
   description: oldDescription,
   price: oldPrice,
+  quantity: oldQuantity,
   category: oldCategory,
   images: oldImages = [],
   properties: oldProperties,
@@ -19,6 +20,7 @@ export default function ProductForm({
   const [productProperties,setProductProperties] = useState(oldProperties || {})
   const [price, setPrice] = useState(oldPrice || '');
   const [images, setImages] = useState(oldImages || []);
+  const [quantity, setQuantity] = useState(oldQuantity || 0);
   const [goToProducts, setGoToProducts] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
 
@@ -33,7 +35,7 @@ export default function ProductForm({
 
   async function saveProduct(e) {
     e.preventDefault();
-    const data = { title, description, price: Number(price), images, category, properties: productProperties };
+    const data = { title, description, price: Number(price), images, quantity, category, properties: productProperties };
 
     try {
       if (_id) {
@@ -115,21 +117,20 @@ export default function ProductForm({
           {categories.length > 0 && categories.map((item,index) => (
               <option value={item._id} key={index} >{item.name}</option>
           ))}
-
       </select>
 
-          {propertiesToFill.length > 0 && propertiesToFill.map((pItem,pIndex) => (
-            <div key={pIndex} className=''>
-              <label>{pItem.name[0].toUpperCase()+pItem.name.substring(1)}</label>
-              <div>
-                <select value={productProperties[pItem.name]} onChange={(e) => setProductProp(pItem.name, e.target.value)}>
-                  {pItem.values.map((vItem,vIndex) => (
-                    <option value={vItem} key={vIndex}>{vItem}</option>
-                  ))}
-                </select>
-              </div>
-            </div>
-          ))}
+      {propertiesToFill.length > 0 && propertiesToFill.map((pItem,pIndex) => (
+        <div key={pIndex} className=''>
+          <label>{pItem.name[0].toUpperCase()+pItem.name.substring(1)}</label>
+          <div>
+            <select value={productProperties[pItem.name]} onChange={(e) => setProductProp(pItem.name, e.target.value)}>
+              {pItem.values.map((vItem,vIndex) => (
+                <option value={vItem} key={vIndex}>{vItem}</option>
+              ))}
+            </select>
+          </div>
+        </div>
+      ))}
 
       <label>Photos</label>
       <div className='mb-2 flex gap-1 flex-wrap'>
@@ -152,8 +153,15 @@ export default function ProductForm({
           <div>Upload</div>
           <input type="file" className='hidden' multiple onChange={uploadImages}/>
         </label>
-        
       </div>
+
+      <label>Quantity</label>
+      <input
+        type="number"
+        value={quantity}
+        onChange={(e) => setQuantity(e.target.value)}
+        required
+      />
 
       <label>Product Description</label>
       <textarea 
@@ -170,7 +178,10 @@ export default function ProductForm({
         onChange={(e) => setPrice(e.target.value)} 
       />
 
-      <button className='btn-primary' type='submit'>Save</button>
+      <div className="flex gap-2 justify-end">
+        <button type="button" onClick={() => router.push('/products')} className=" btn-default">Cancel</button>
+        <button className='btn-primary' type='submit'>Save</button>
+      </div>
     </form>
   );
 }

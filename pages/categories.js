@@ -152,7 +152,7 @@ export default function Categories() {
                     <tr>
                         <th>Category name</th>
                         <th>Parent category</th>
-                        <th></th>
+                        <th>Actions</th>
                     </tr>
                 </thead>
                 <tbody>

@@ -17,7 +17,7 @@ export default async function handler(req, res) {
 
   if (req.method === 'POST') {
     try {
-      const { title, price, description, images, category, properties } = req.body;
+      const { title, price, description, quantity, images, category, properties } = req.body;
 
       if (!title || !price) {
         return res.status(400).json({ error: 'Title and price are required' });
@@ -27,6 +27,7 @@ export default async function handler(req, res) {
         title,
         price,
         description,
+        quantity,
         images,
         category,
         properties,
@@ -39,8 +40,9 @@ export default async function handler(req, res) {
   }
 
   if (req.method === 'PUT') {
-    const { title, price, description, _id, images, category, properties } = req.body;
-    await Product.updateOne({ _id }, { title, price, description, images, category, properties });
+    const { title, price, description, quantity, _id, images, category, properties } = req.body;
+    await Product.updateOne({ _id }, { title, price, description, quantity, images, category, properties });
+
     res.json(true);
   }
 
