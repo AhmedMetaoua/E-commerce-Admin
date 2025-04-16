@@ -6,14 +6,14 @@ import GoogleProvider from 'next-auth/providers/google'
 // import FacebookProvider from 'next-auth/providers/facebook'
 // import EmailProvider from 'next-auth/providers/email'
 
-const adminEmails= ['ahmedmtawahg@gmail.com']
+const adminEmails= ['ahmedmtawahg@gmail.com','alphateam.v4.0@gmail.com']
 
 const authOptions = {
   providers: [
     // OAuth authentication providers...
     GoogleProvider({
       clientId: process.env.GOOGLE_ID,
-      clientSecret: process.env.GOOGLE_SECRET
+      clientSecret: process.env.GOOGLE_SECRET,
     }),
     
   ],

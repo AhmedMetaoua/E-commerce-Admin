@@ -2,18 +2,22 @@ import LeftNav from "@/components/LeftNav";
 import { useSession, signIn, signOut } from "next-auth/react"
 import { useState } from "react";
 import Logo from "./logo";
-
+import LoginPage from './../login';
 export default function Layout({children}) {
 
   const [showNav, setShowNav] = useState(false)
   const { data: session } = useSession();
 
   if (!session){
-    return (<div className="bg-bgGray w-screen h-screen flex items-center justify-center">
-        <button onClick={ () => signIn('google') } className="bg-white p-2 px-4 rounded-lg cursor-pointer">
-          Login with Google
-        </button>
-    </div>)
+    return (
+      <>
+      <LoginPage/>
+      <div className="bg-bgGray w-screen h-screen flex items-center justify-center ">
+          <button onClick={ () => signIn('google') } className="bg-gray-200 p-2 px-4 rounded-lg cursor-pointer ">
+            Login with Google
+          </button>
+      </div>
+      </>)
   }
 
   return (
