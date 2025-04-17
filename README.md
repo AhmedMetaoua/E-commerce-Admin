@@ -18,4 +18,8 @@ Contact : [email:'' ,phone:'']
 featuredProduct : ''
 
 
-add save changes button lel users block
+pages/
+├── forgot-password.js       <-- page Next.js (serveur)
+components/
+└── ForgotPasswordClient.js  <-- composant React (client)
+

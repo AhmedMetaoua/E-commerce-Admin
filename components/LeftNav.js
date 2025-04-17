@@ -16,7 +16,6 @@ export default function Navbar({show, setShow}) {
     const pathName = router.pathname;
 
     async function logOut() {
-        await router.push('/')
         await signOut();
     }
   return (<>

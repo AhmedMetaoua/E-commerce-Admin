@@ -2,11 +2,14 @@
 
 import { useState } from "react"
 import Link from "next/link"
+import axios from "axios"
+import { useRouter } from "next/router"
 
 export default function RegisterPage() {
+
+  const router = useRouter()
   const [formData, setFormData] = useState({
-    firstName: "",
-    lastName: "",
+    userName: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -25,12 +28,8 @@ export default function RegisterPage() {
   const validateForm = () => {
     const newErrors = {}
 
-    if (!formData.firstName.trim()) {
-      newErrors.firstName = "First name is required"
-    }
-
-    if (!formData.lastName.trim()) {
-      newErrors.lastName = "Last name is required"
+    if (!formData.userName.trim()) {
+      newErrors.userName = "userName is required"
     }
 
     if (!formData.email.trim()) {
@@ -41,8 +40,8 @@ export default function RegisterPage() {
 
     if (!formData.password) {
       newErrors.password = "Password is required"
-    } else if (formData.password.length < 6) {
-      newErrors.password = "Password must be at least 6 characters"
+    } else if (formData.password.length < 3) {
+      newErrors.password = "Password must be at least 3 characters"
     }
 
     if (formData.password !== formData.confirmPassword) {
@@ -53,22 +52,40 @@ export default function RegisterPage() {
     return Object.keys(newErrors).length === 0
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
 
     if (validateForm()) {
       setIsLoading(true)
       // Simulate registration process
-      setTimeout(() => {
+      try {
+        const res = await axios.post('/api/login',formData)
+        setTimeout( () => {
+          setIsLoading(false)
+          // Handle registration logic here
+          console.log("Register with:", formData)
+          console.log('res : ',res)
+        }, 1000)
+        if (res.data) {
+          const form = e.target
+          form.reset()
+          router.push('/')
+        }else{
+          console.log("Registration failed:", res?.data || res.message);
+        }
+      }catch (error) {
+        console.error("🔥 Axios Error:", error.response?.data || error.message);
+        const newErrors ={}
+        newErrors.email = error.response?.data || error.message
+        setErrors(newErrors)
         setIsLoading(false)
-        // Handle registration logic here
-        console.log("Register with:", formData)
-      }, 1500)
+
+      }
     }
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-200 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="flex justify-center">
           <div className="w-auto h-12 relative">
@@ -115,46 +132,24 @@ export default function RegisterPage() {
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
           <form className="space-y-6" onSubmit={handleSubmit}>
-            <div className="grid grid-cols-1 gap-y-6 gap-x-4 sm:grid-cols-2">
               <div>
-                <label htmlFor="firstName" className="block text-sm font-medium text-gray-700">
-                  First name
+                <label htmlFor="userName" className="block text-sm font-medium text-gray-700">
+                  Username
                 </label>
                 <div className="mt-1">
                   <input
                     type="text"
-                    name="firstName"
-                    id="firstName"
+                    name="userName"
+                    id="userName"
                     autoComplete="given-name"
-                    value={formData.firstName}
+                    value={formData.userName}
                     onChange={handleChange}
                     className={`appearance-none block w-full px-3 py-2 border ${
-                      errors.firstName ? "border-red-300" : "border-gray-300"
+                      errors.userName ? "border-red-300" : "border-gray-300"
                     } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
                   />
-                  {errors.firstName && <p className="mt-1 text-xs text-red-600">{errors.firstName}</p>}
+                  {errors.userName && <p className="mt-1 text-xs text-red-600">{errors.userName}</p>}
                 </div>
-              </div>
-
-              <div>
-                <label htmlFor="lastName" className="block text-sm font-medium text-gray-700">
-                  Last name
-                </label>
-                <div className="mt-1">
-                  <input
-                    type="text"
-                    name="lastName"
-                    id="lastName"
-                    autoComplete="family-name"
-                    value={formData.lastName}
-                    onChange={handleChange}
-                    className={`appearance-none block w-full px-3 py-2 border ${
-                      errors.lastName ? "border-red-300" : "border-gray-300"
-                    } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
-                  />
-                  {errors.lastName && <p className="mt-1 text-xs text-red-600">{errors.lastName}</p>}
-                </div>
-              </div>
             </div>
 
             <div>

@@ -9,13 +9,6 @@ import axios from "axios"
 import Link from "next/link"
 
 
-// Sample initial users data - replace with your actual data source
-const initialUsers = [
-  { id: 1, name: "John Doe", email: "john@example.com", role: "Admin" },
-  { id: 2, name: "Jane Smith", email: "jane@example.com", role: "Manager" },
-  { id: 3, name: "Robert Johnson", email: "robert@example.com", role: "Editor" },
-]
-
 export default function SettingsPage() {
     const { data: session } = useSession()
     const [products, setProducts] = useState([])
@@ -73,6 +66,11 @@ export default function SettingsPage() {
       setIsAddingUser(false)
     }
   }
+  const handleRemoveUser = (userToRemove) => {
+    const updatedUsers = users.filter((user) => user.email !== userToRemove.email)
+    setUsers(updatedUsers)
+  }
+  
   
   // Handle saving featured product and users
   const handleSaveChanges = async (e) => {

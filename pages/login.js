@@ -4,32 +4,40 @@ import { useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { signIn } from "next-auth/react"
+import { useRouter } from "next/router"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
   const [password, setPassword] = useState("")
   const [rememberMe, setRememberMe] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState("")
 
-  const handleSubmit = (e) => {
-    e.preventDefault()
-    setIsLoading(true)
-    // Simulate login process
-    setTimeout(() => {
-      setIsLoading(false)
-      // Handle login logic here
-      signIn();
-      console.log("Login with:", email, password)
-    }, 1500)
-  }
+  const router = useRouter()
 
-  // const signIn = (provider) => {
-  //   console.log(`Sign in with ${provider}`)
-  //   // Implement your social login logic here
-  // }
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setIsLoading(true);
+    setError("");
+  
+    const res = await signIn("credentials", {
+      email,
+      password,
+      redirect: false,
+    });
+  
+    setIsLoading(false);
+  
+    if (res?.error) {
+      setError(res.error); 
+    } else {
+      router.push("/");
+    }
+  };
+  
 
   return (
-    <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gray-200 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
         <div className="flex justify-center">
           <div className="w-auto h-12 relative">
@@ -113,7 +121,7 @@ export default function LoginPage() {
                 />
               </div>
             </div>
-
+            {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
             <div className="flex items-center justify-between">
               <div className="flex items-center">
                 <input
@@ -225,44 +233,6 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* Featured products or promotional content */}
-      <div className="mt-12 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-4 px-4 shadow sm:rounded-lg sm:px-10">
-          <div className="text-center">
-            <p className="text-sm font-medium text-gray-700">New arrivals</p>
-            <div className="mt-4 flex justify-center space-x-4">
-              <div className="relative w-16 h-16 rounded-md overflow-hidden">
-                <Image
-                  src="/placeholder.svg?height=64&width=64"
-                  alt="Product 1"
-                  width={64}
-                  height={64}
-                  className="object-cover"
-                />
-              </div>
-              <div className="relative w-16 h-16 rounded-md overflow-hidden">
-                <Image
-                  src="/placeholder.svg?height=64&width=64"
-                  alt="Product 2"
-                  width={64}
-                  height={64}
-                  className="object-cover"
-                />
-              </div>
-              <div className="relative w-16 h-16 rounded-md overflow-hidden">
-                <Image
-                  src="/placeholder.svg?height=64&width=64"
-                  alt="Product 3"
-                  width={64}
-                  height={64}
-                  className="object-cover"
-                />
-              </div>
-            </div>
-            <p className="mt-2 text-xs text-gray-500">Sign in to see our latest products and exclusive offers</p>
-          </div>
-        </div>
-      </div>
     </div>
   )
 }

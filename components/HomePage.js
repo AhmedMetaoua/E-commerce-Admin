@@ -34,16 +34,17 @@ const recentOrders = [
 export default function Dashboard() {
   const { data: session } = useSession()
 
+  console.log('session: ',session)
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">Welcome back, {session?.user?.name}</h1>
+          <h1 className="text-2xl font-bold tracking-tight">Welcome back, {session?.name||session?.userName}</h1>
           <p className="text-gray-500">Here's an overview of your store's performance</p>
         </div>
         <div className="flex items-center bg-white rounded-lg overflow-hidden shadow-sm mt-2 sm:mt-0">
-          {session?.user?.image && <img src={session.user.image || "/placeholder.svg"} alt="" className="w-10 h-10" />}
-          <span className="px-3 py-2 font-medium">{session?.user?.name}</span>
+          {session?.image && <img src={session.user.image || "/placeholder.svg"} alt="" className="w-10 h-10" />}
+          <span className="px-3 py-2 font-medium">{session?.name || session?.userName}</span>
         </div>
       </div>
 

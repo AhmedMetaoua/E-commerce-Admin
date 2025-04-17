@@ -12,11 +12,11 @@ export default function Layout({children}) {
     return (
       <>
       <LoginPage/>
-      <div className="bg-bgGray w-screen h-screen flex items-center justify-center ">
+      {/* <div className="bg-bgGray w-screen h-screen flex items-center justify-center ">
           <button onClick={ () => signIn('google') } className="bg-gray-200 p-2 px-4 rounded-lg cursor-pointer ">
             Login with Google
           </button>
-      </div>
+      </div> */}
       </>)
   }
 

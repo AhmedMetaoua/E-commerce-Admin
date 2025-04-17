@@ -12,7 +12,6 @@ cloudinary.v2.config({
 export default async function handle(req, res) {
   
   await dbConnect();
-  await isAdminRequest(req, res)
 
   const form = new multiparty.Form();
   const { files } = await new Promise((resolve, reject) => {

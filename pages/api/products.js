@@ -5,7 +5,6 @@ import { isAdminRequest } from './auth/[...nextauth]';
 
 export default async function handler(req, res) {
   await dbConnect();
-  await isAdminRequest(req, res)
   
   if (req.method === 'GET') {
     if (req.query?.id) {
