@@ -2,7 +2,7 @@ import LeftNav from "@/components/LeftNav";
 import { useSession, signIn, signOut } from "next-auth/react"
 import { useState } from "react";
 import Logo from "./logo";
-import LoginPage from './../login';
+import LoginPage from "@/pages/login";
 export default function Layout({children}) {
 
   const [showNav, setShowNav] = useState(false)

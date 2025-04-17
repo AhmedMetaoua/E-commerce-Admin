@@ -3,6 +3,7 @@
 import { useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
+import { signIn } from "next-auth/react"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
@@ -17,14 +18,15 @@ export default function LoginPage() {
     setTimeout(() => {
       setIsLoading(false)
       // Handle login logic here
+      signIn();
       console.log("Login with:", email, password)
     }, 1500)
   }
 
-  const signIn = (provider) => {
-    console.log(`Sign in with ${provider}`)
-    // Implement your social login logic here
-  }
+  // const signIn = (provider) => {
+  //   console.log(`Sign in with ${provider}`)
+  //   // Implement your social login logic here
+  // }
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8">

@@ -6,7 +6,7 @@ import GoogleProvider from 'next-auth/providers/google'
 // import FacebookProvider from 'next-auth/providers/facebook'
 // import EmailProvider from 'next-auth/providers/email'
 
-const adminEmails= ['ahmedmtawahg@gmail.com','alphateam.v4.0@gmail.com']
+const adminEmails= ['ahmedmtawahg@gmail.com','alphateam.v4.0@gmail.com','metaouaahmed@isimm.u-monastir.tn']
 
 const authOptions = {
   providers: [

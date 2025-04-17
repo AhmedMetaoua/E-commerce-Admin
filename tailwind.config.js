@@ -55,6 +55,7 @@ const config = {
         // primary: '#5542F6',
         // highlight: '#d5d4fa',
         // bgGray: 'fbfafd'
+        
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -74,6 +75,9 @@ const config = {
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
+      },
+      boxShadow: {
+        "input-focus": "0 0 0 2px rgba(99, 102, 241, 0.2)",
       },
     },
   },
