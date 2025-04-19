@@ -124,6 +124,7 @@ export default function ProductForm({
           <label>{pItem.name[0].toUpperCase()+pItem.name.substring(1)}</label>
           <div>
             <select value={productProperties[pItem.name]} onChange={(e) => setProductProp(pItem.name, e.target.value)}>
+              <option value='select'>select</option>
               {pItem.values.map((vItem,vIndex) => (
                 <option value={vItem} key={vIndex}>{vItem}</option>
               ))}

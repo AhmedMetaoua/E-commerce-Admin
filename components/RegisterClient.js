@@ -2,44 +2,97 @@
 
 import { useState } from "react"
 import Link from "next/link"
-import Image from "next/image"
-import { signIn } from "next-auth/react"
+import axios from "axios"
 import { useRouter } from "next/router"
 
-export default function LoginPage() {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
-  const [rememberMe, setRememberMe] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState("")
-  const [showPassword, setShowPassword] = useState(false)
+export default function RegisterPage() {
 
   const router = useRouter()
+  const [formData, setFormData] = useState({
+    userName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
+  })
+  const [isLoading, setIsLoading] = useState(false)
+  const [errors, setErrors] = useState({})
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
+
+  const handleChange = (e) => {
+    const { name, value } = e.target
+    setFormData({
+      ...formData,
+      [name]: value,
+    })
+  }
 
   const togglePasswordVisibility = () => {
     setShowPassword(!showPassword)
   }
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsLoading(true);
-    setError("");
-  
-    const res = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-    });
-  
-    setIsLoading(false);
-  
-    if (res?.error) {
-      setError(res.error); 
-    } else {
-      router.push("/");
+  const toggleConfirmPasswordVisibility = () => {
+    setShowConfirmPassword(!showConfirmPassword)
+  }
+
+  const validateForm = () => {
+    const newErrors = {}
+
+    if (!formData.userName.trim()) {
+      newErrors.userName = "userName is required"
     }
-  };
-  
+
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required"
+    } else if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      newErrors.email = "Email is invalid"
+    }
+
+    if (!formData.password) {
+      newErrors.password = "Password is required"
+    } else if (formData.password.length < 3) {
+      newErrors.password = "Password must be at least 3 characters"
+    }
+
+    if (formData.password !== formData.confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match"
+    }
+
+    setErrors(newErrors)
+    return Object.keys(newErrors).length === 0
+  }
+
+  const handleSubmit = async (e) => {
+    e.preventDefault()
+
+    if (validateForm()) {
+      setIsLoading(true)
+      // Simulate registration process
+      try {
+        const res = await axios.post('/api/login',formData)
+        setTimeout( () => {
+          setIsLoading(false)
+          // Handle registration logic here
+          console.log("Register with:", formData)
+          console.log('res : ',res)
+        }, 1000)
+        if (res.data) {
+          const form = e.target
+          form.reset()
+          router.push('/')
+        }else{
+          console.log("Registration failed:", res?.data || res.message);
+        }
+      }catch (error) {
+        console.error("🔥 Axios Error:", error.response?.data || error.message);
+        const newErrors ={}
+        newErrors.email = error.response?.data || error.message
+        setErrors(newErrors)
+        setIsLoading(false)
+
+      }
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gray-200 flex flex-col justify-center py-12 sm:px-6 lg:px-8">
@@ -77,11 +130,11 @@ export default function LoginPage() {
             </svg>
           </div>
         </div>
-        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Sign in to your account</h2>
+        <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Create your account</h2>
         <p className="mt-2 text-center text-sm text-gray-600">
           Or{" "}
-          <Link href="/register" className="font-medium text-indigo-600 hover:text-indigo-500">
-            create a new account
+          <Link href="/login" className="font-medium text-indigo-600 hover:text-indigo-500">
+            sign in to your existing account
           </Link>
         </p>
       </div>
@@ -89,6 +142,26 @@ export default function LoginPage() {
       <div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
         <div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
           <form className="space-y-6" onSubmit={handleSubmit}>
+              <div>
+                <label htmlFor="userName" className="block text-sm font-medium text-gray-700">
+                  Username
+                </label>
+                <div className="mt-1">
+                  <input
+                    type="text"
+                    name="userName"
+                    id="userName"
+                    autoComplete="given-name"
+                    value={formData.userName}
+                    onChange={handleChange}
+                    className={`appearance-none block w-full px-3 py-2 border ${
+                      errors.userName ? "border-red-300" : "border-gray-300"
+                    } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
+                  />
+                  {errors.userName && <p className="mt-1 text-xs text-red-600">{errors.userName}</p>}
+                </div>
+            </div>
+
             <div>
               <label htmlFor="email" className="block text-sm font-medium text-gray-700">
                 Email address
@@ -99,12 +172,13 @@ export default function LoginPage() {
                   name="email"
                   type="email"
                   autoComplete="email"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  placeholder="Enter your email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className={`appearance-none block w-full px-3 py-2 border ${
+                    errors.email ? "border-red-300" : "border-gray-300"
+                  } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
                 />
+                {errors.email && <p className="mt-1 text-xs text-red-600">{errors.email}</p>}
               </div>
             </div>
 
@@ -117,12 +191,12 @@ export default function LoginPage() {
                   id="password"
                   name="password"
                   type={showPassword ? "text" : "password"}
-                  autoComplete="current-password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="appearance-none block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                  placeholder="Enter your password"
+                  autoComplete="new-password"
+                  value={formData.password}
+                  onChange={handleChange}
+                  className={`appearance-none block w-full px-3 py-2 border ${
+                    errors.password ? "border-red-300" : "border-gray-300"
+                  } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
                 />
                 <button
                   type="button"
@@ -140,29 +214,63 @@ export default function LoginPage() {
                     </svg>
                   )}
                 </button>
+                {errors.password && <p className="mt-1 text-xs text-red-600">{errors.password}</p>}
               </div>
             </div>
-            {error && <p className="mt-1 text-xs text-red-600">{error}</p>}
-            <div className="flex items-center justify-between">
-              <div className="flex items-center">
-                <input
-                  id="remember-me"
-                  name="remember-me"
-                  type="checkbox"
-                  checked={rememberMe}
-                  onChange={(e) => setRememberMe(e.target.checked)}
-                  className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
-                />
-                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-900">
-                  Remember me
-                </label>
-              </div>
 
-              <div className="text-sm">
-                <Link href="/forgot-password" className="font-medium text-indigo-600 hover:text-indigo-500">
-                  Forgot your password?
-                </Link>
+            <div>
+              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700">
+                Confirm password
+              </label>
+              <div className="mt-1 relative">
+                <input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  type={showConfirmPassword ? "text" : "password"}
+                  autoComplete="new-password"
+                  value={formData.confirmPassword}
+                  onChange={handleChange}
+                  className={`appearance-none block w-full px-3 py-2 border ${
+                    errors.confirmPassword ? "border-red-300" : "border-gray-300"
+                  } rounded-md shadow-sm placeholder-gray-400 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm`}
+                />
+                <button
+                  type="button"
+                  onClick={toggleConfirmPasswordVisibility}
+                  className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                >
+                  {showConfirmPassword ? (
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                  ) : (
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                    </svg>
+                  )}
+                </button>
+                {errors.confirmPassword && <p className="mt-1 text-xs text-red-600">{errors.confirmPassword}</p>}
               </div>
+            </div>
+
+            <div className="flex items-center">
+              <input
+                id="terms"
+                name="terms"
+                type="checkbox"
+                className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+              />
+              <label htmlFor="terms" className="ml-2 block text-sm text-gray-900">
+                I agree to the{" "}
+                <a href="#" className="font-medium text-indigo-600 hover:text-indigo-500">
+                  Terms
+                </a>{" "}
+                and{" "}
+                <a href="#" className="font-medium text-indigo-600 hover:text-indigo-500">
+                  Privacy Policy
+                </a>
+              </label>
             </div>
 
             <div>
@@ -197,7 +305,7 @@ export default function LoginPage() {
                     ></path>
                   </svg>
                 ) : null}
-                Sign in
+                Create account
               </button>
             </div>
           </form>
@@ -214,9 +322,9 @@ export default function LoginPage() {
 
             <div className="mt-6 grid grid-cols-2 gap-3">
               <div>
-                <button
-                  onClick={() => signIn("google")}
-                  className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                <a
+                  href="#" //Google
+                  className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
                 >
                   <svg className="w-5 h-5" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path
@@ -236,24 +344,23 @@ export default function LoginPage() {
                       fill="#EA4335"
                     />
                   </svg>
-                </button>
+                </a>
               </div>
 
               <div>
-                <button
-                  onClick={() => signIn("facebook")}
-                  className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                <a
+                  href="#" //Facebook
+                  className="w-full inline-flex justify-center py-2 px-4 border border-gray-300 rounded-md shadow-sm bg-white text-sm font-medium text-gray-500 hover:bg-gray-50"
                 >
                   <svg className="w-5 h-5 text-[#1877F2]" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M9.19795 21.5H13.198V13.4901H16.8021L17.198 9.50977H13.198V7.5C13.198 6.94772 13.6457 6.5 14.198 6.5H17.198V2.5H14.198C11.4365 2.5 9.19795 4.73858 9.19795 7.5V9.50977H7.19795L6.80206 13.4901H9.19795V21.5Z" />
                   </svg>
-                </button>
+                </a>
               </div>
             </div>
           </div>
         </div>
       </div>
-
     </div>
   )
 }
