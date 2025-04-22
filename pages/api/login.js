@@ -33,27 +33,5 @@ export default async function handler(req, res) {
     }
 
 
-    
-    if (req.method === 'GET') {
-        if (req.query?.id) {
-            res.json(await Product.findOne({ _id: req.query.id }));
-        } else {
-            res.json(await Product.find().populate('category'));
-        }
-    }
 
-
-    if (req.method === 'PUT') {
-        const { title, price, description, quantity, _id, images, category, properties } = req.body;
-        await Product.updateOne({ _id }, { title, price, description, quantity, images, category, properties });
-
-        res.json(true);
-    }
-
-    if (req.method === 'DELETE') {
-        if (req.query?.id) {
-            await Product.deleteOne({ _id: req.query.id });
-        }
-        res.json(true);
-    }
 }
