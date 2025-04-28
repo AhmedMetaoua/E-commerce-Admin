@@ -112,16 +112,16 @@ e-commerce-admin/
 4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-## 📝 License
-
-This project is licensed under the MIT License - see the LICENSE file for details.
-
-
 ## 🙏 Acknowledgments
 
 - Next.js team for the amazing framework
 - MongoDB for the database
 - All open-source libraries used in this project
+
+## 📝 License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
 
 ## Support
 
